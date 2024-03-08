@@ -165,7 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 12
-  damage: 10
+  damage: 8
   residueObject: {fileID: 994833151520706570, guid: 9bbc3a93ef142344aba842a07c1fda92, type: 3}
 --- !u!50 &2050016999936911985
 Rigidbody2D:

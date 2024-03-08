@@ -17,20 +17,34 @@ public class ButtonHighlightController : MonoBehaviour
 
     private Vector3 originalPosition;
     private Vector3 originalScale;
+    private AudioSource audioSource;
 
 
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         originalScale = objectToScale.localScale;
         originalPosition = objectToScale.localPosition;
-        muzzleMaterial.DOFloat(1f, "_FadeAmount", 0);
-        muzzleMaterial2.DOFloat(1f, "_FadeAmount", 0);
+
+        if (muzzleMaterial != null)
+        {
+            muzzleMaterial.DOFloat(1f, "_FadeAmount", 0);
+            muzzleMaterial2.DOFloat(1f, "_FadeAmount", 0);
+        }
+       
     }
     public void MouseEnterVisuals()
     {
-        particles.Play();
-        muzzleMaterial.DOFloat(0f, "_FadeAmount", muzzleFadeDuration);
-        muzzleMaterial2.DOFloat(0f, "_FadeAmount", muzzleFadeDuration);
+        audioSource.Play();
+
+        if (particles != null)
+            particles.Play();
+        if (muzzleMaterial != null)
+        {
+            muzzleMaterial.DOFloat(0f, "_FadeAmount", muzzleFadeDuration);
+            muzzleMaterial2.DOFloat(0f, "_FadeAmount", muzzleFadeDuration);
+        }
+            
         objectToScale.DOScale(endScale, scaleDuration);
         Vector3 positionToMoveTo = originalPosition + positionOffset;
         objectToScale.DOLocalMove(positionToMoveTo, moveDuration);
@@ -38,9 +52,15 @@ public class ButtonHighlightController : MonoBehaviour
 
     public void MouseExitVisuals()
     {
-        particles.Stop();
-        muzzleMaterial.DOFloat(1f, "_FadeAmount", muzzleFadeDuration);
-        muzzleMaterial2.DOFloat(1f, "_FadeAmount", muzzleFadeDuration);
+        if (particles != null)
+            particles.Stop();
+
+        if (muzzleMaterial != null)
+        {
+            muzzleMaterial.DOFloat(1f, "_FadeAmount", muzzleFadeDuration);
+            muzzleMaterial2.DOFloat(1f, "_FadeAmount", muzzleFadeDuration);
+        }
+      
         objectToScale.DOScale(originalScale, scaleDuration);
         objectToScale.DOLocalMove(originalPosition, moveDuration);
     }

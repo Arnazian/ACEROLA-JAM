@@ -251,7 +251,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   selfDestructOnTouch: 1
-  damage: 10
+  damage: 8
 --- !u!114 &1045393876800025814
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -267,7 +267,7 @@ MonoBehaviour:
   myLight: {fileID: 2773564082458538088}
   intensity: 0
   fadeDuration: 0.2
-  distanceToActivate: 7
+  distanceToActivate: 10
 --- !u!1 &5179823386004021355
 GameObject:
   m_ObjectHideFlags: 0

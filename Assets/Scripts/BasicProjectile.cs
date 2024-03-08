@@ -7,13 +7,16 @@ public class BasicProjectile : MonoBehaviour
     [Range(0, 100)]
     [SerializeField] private float projectileSpeed;
     private float projectileDamage;
-    [SerializeField] private GameObject deathParticles;
+    [SerializeField] private GameObject hitObjectResidue; 
+    [SerializeField] private GameObject hitEnemyResidue;
     [SerializeField] private GameObject[] artToDisable;
 
     [Header("Destroying Projectile After Time")]
     [SerializeField] private bool destroyAfterTime = false;
     [SerializeField] private float destroyAfterSeconds;
 
+    [SerializeField] private Vector2 pitch;
+    private AudioSource audioSource;
     private string enemyTag = "Enemy";
     private string objectTag = "Object";
     private bool disabled = false;
@@ -22,6 +25,9 @@ public class BasicProjectile : MonoBehaviour
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+        audioSource.pitch = Random.Range(pitch.x, pitch.y);         
+        audioSource.Play();
         rb = GetComponent<Rigidbody2D>();
         if (destroyAfterTime) { StartCoroutine(DestroyObjectAfterSeconds(destroyAfterSeconds)); }
         rb.velocity = transform.up * projectileSpeed;
@@ -61,21 +67,24 @@ public class BasicProjectile : MonoBehaviour
 
     void HitBoss(BossHealth bHealth)
     {
+        AudioManager.instance.PlayHitEnemy();
         DisableSelf();
         bHealth.TakeDamage(projectileDamage);
-        Instantiate(deathParticles, transform.position, transform.rotation);
+        Instantiate(hitEnemyResidue, transform.position, transform.rotation);
     }
     void HitEnemy(EnemyHealth eHealth)
     {
+        AudioManager.instance.PlayHitEnemy();
         DisableSelf();
         eHealth.TakeDamage(projectileDamage);
-        Instantiate(deathParticles, transform.position, transform.rotation);
+        Instantiate(hitEnemyResidue, transform.position, transform.rotation);
     }
 
     void HitObject()
     {
+        AudioManager.instance.PlayHitObject();
         DisableSelf();
-        Instantiate(deathParticles, transform.position, transform.rotation);
+        Instantiate(hitObjectResidue, transform.position, transform.rotation);
     }
 
     private void DisableSelf()

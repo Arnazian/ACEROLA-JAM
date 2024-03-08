@@ -9,12 +9,15 @@ public class MainMenuFunctions : MonoBehaviour
     [SerializeField] private float fadeDuration;
     [SerializeField] private float secondsBeforeLoadingScene;
 
+    [SerializeField] private AudioSource ambiance;
+
     private void Start()
     {
         foreGroundFade.DOFloat(1f, "_FadeAmount", 0);
     }
     public void StartGame()
     {
+        ambiance.DOFade(0f, fadeDuration);
         foreGroundFade.DOFloat(0f, "_FadeAmount", fadeDuration).OnComplete(() =>
         {
             StartCoroutine(LoadGameScene());

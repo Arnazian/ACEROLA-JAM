@@ -53,7 +53,9 @@ public class PlayerActivation : MonoBehaviour
         yield return new WaitForSeconds(secondsAfterBaseLightFade);
 
         foreach (SpriteRenderer sr in playerArt)
-            sr.DOFade(1f, artFadeInDuration);    
+            sr.DOFade(1f, artFadeInDuration);
+        AudioManager.instance.PlayMusic();
+
         yield return new WaitForSeconds(secondsAfterArtFade);
         playerHeatlh.EnableHealthBar();
         playerLightController.FadeInFlashLight(flashLightFadeInDuration);
