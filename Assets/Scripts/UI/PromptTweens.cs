@@ -54,8 +54,7 @@ public class PromptTweens : MonoBehaviour
 
     private void OnEnable()
     {
-        SetEverythingToStartingPositions();
-        PlayerStateController.instance.StunPlayer();
+        SetEverythingToStartingPositions();       
 
         FadeImagesIn();
         FadeTextsIn();

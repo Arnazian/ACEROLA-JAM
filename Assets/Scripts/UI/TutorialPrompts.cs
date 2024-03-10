@@ -14,13 +14,18 @@ public class TutorialPrompts : MonoBehaviour
     {
         movePrompt.SetActive(true);
         PauseGame.instance.DoPauseGame();
+        PlayerStateController.instance.StunPlayer();
     }
     public void OpenDashPrompt()
     {
         dashPrompt.SetActive(true);
+        PauseGame.instance.DoPauseGame();
+        PlayerStateController.instance.StunPlayer();
     }
     public void OpenShootPrompt()
     {
         shootPrompt.SetActive(true);
+        PauseGame.instance.DoPauseGame();
+        PlayerStateController.instance.StunPlayer();
     }
  }

@@ -13,7 +13,6 @@ public class ButtonHighlightController : MonoBehaviour
     [SerializeField] private float muzzleFadeDuration;
     [SerializeField] private ParticleSystem particles;
     [SerializeField] private Material muzzleMaterial;
-    [SerializeField] private Material muzzleMaterial2;
 
     private Vector3 originalPosition;
     private Vector3 originalScale;
@@ -29,7 +28,6 @@ public class ButtonHighlightController : MonoBehaviour
         if (muzzleMaterial != null)
         {
             muzzleMaterial.DOFloat(1f, "_FadeAmount", 0).SetUpdate(true);
-            muzzleMaterial2.DOFloat(1f, "_FadeAmount", 0).SetUpdate(true);
         }
        
     }
@@ -42,7 +40,6 @@ public class ButtonHighlightController : MonoBehaviour
         if (muzzleMaterial != null)
         {
             muzzleMaterial.DOFloat(0f, "_FadeAmount", muzzleFadeDuration).SetUpdate(true);
-            muzzleMaterial2.DOFloat(0f, "_FadeAmount", muzzleFadeDuration).SetUpdate(true);
         }
             
         objectToScale.DOScale(endScale, scaleDuration).SetUpdate(true);
@@ -58,7 +55,6 @@ public class ButtonHighlightController : MonoBehaviour
         if (muzzleMaterial != null)
         {
             muzzleMaterial.DOFloat(1f, "_FadeAmount", muzzleFadeDuration).SetUpdate(true);
-            muzzleMaterial2.DOFloat(1f, "_FadeAmount", muzzleFadeDuration).SetUpdate(true);
         }
       
         objectToScale.DOScale(originalScale, scaleDuration).SetUpdate(true);

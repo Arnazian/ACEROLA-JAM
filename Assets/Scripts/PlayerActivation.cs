@@ -23,14 +23,19 @@ public class PlayerActivation : MonoBehaviour
     [SerializeField] private float artFadeInDuration;
     [SerializeField] private float flashLightFadeInDuration;
 
+    [SerializeField] private CursorController cursorController;
     [SerializeField] private TutorialPrompts tutorialPrompts;
     private PlayerHealth playerHeatlh;
 
     private void Start()
     {
         if (disableStartDelay)
+        {
+            cursorController.EnableFancyMouse();
             return;
+        }
 
+        cursorController.DisableFancyMouse();
         playerHeatlh = GetComponent<PlayerHealth>();
         playerHeatlh.DisableHealthBar();
 
@@ -61,10 +66,10 @@ public class PlayerActivation : MonoBehaviour
         playerHeatlh.EnableHealthBar();
         playerLightController.FadeInFlashLight(flashLightFadeInDuration);
         yield return new WaitForSeconds(secondsAfterFlashLightFade);
+
+        cursorController.EnableFancyMouse();
         particles.SetActive(true);
    
-            
- ;
         PlayerStateController.instance.UnStunPlayer();
         CameraShake.instance.ResetCameraTarget();
 

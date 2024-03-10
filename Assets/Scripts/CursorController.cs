@@ -11,18 +11,25 @@ public class CursorController : MonoBehaviour
     [SerializeField] private ParticleSystem burstParticles;
     [SerializeField] private ParticleSystem followParticles;
     private bool normalMouseVisible = false;
+
     
     void Start()
     {
+ 
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = false;
-        PlayerStateController.instance.onShootStateEnter.AddListener(DisableFancyMouse);
-        PlayerStateController.instance.onMoveStateEnter.AddListener(EnableFancyMouse);
-
-        PauseGame.instance.onGamePause.AddListener(SetNormalMouseVisible);
-        PauseGame.instance.onGamePause.AddListener(DisableFancyMouse);
-        PauseGame.instance.onGameResume.AddListener(SetNormalMouseInvisble);
-        PauseGame.instance.onGameResume.AddListener(EnableFancyMouse);
+        if(PlayerStateController.instance != null)
+        {
+            PlayerStateController.instance.onShootStateEnter.AddListener(DisableFancyMouse);
+            PlayerStateController.instance.onMoveStateEnter.AddListener(EnableFancyMouse);
+        }
+        if (PauseGame.instance != null)
+        {
+            PauseGame.instance.onGamePause.AddListener(SetNormalMouseVisible);
+            PauseGame.instance.onGamePause.AddListener(DisableFancyMouse);
+            PauseGame.instance.onGameResume.AddListener(SetNormalMouseInvisble);
+            PauseGame.instance.onGameResume.AddListener(EnableFancyMouse);
+        }       
     }
 
     
