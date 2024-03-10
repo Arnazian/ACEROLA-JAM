@@ -12,6 +12,8 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource hitEnemyStrong;
     [SerializeField] private AudioSource music;
     [SerializeField] private AudioSource enemyDeath;
+    [SerializeField] private AudioSource closeUI;
+    [SerializeField] private AudioSource bossScream;
 
     [SerializeField] private Vector2 hitObjectPitch;
     [SerializeField] private Vector2 hitEnemyPitch;
@@ -24,6 +26,14 @@ public class AudioManager : MonoBehaviour
     {
         musicVolume = music.volume;
         music.volume = 0;
+    }
+    public void PlayBossScream()
+    {
+        bossScream.Play();
+    }
+    public void PlayCloseUI()
+    {
+        closeUI.Play();
     }
     public void PlayHitEnemy()
     {

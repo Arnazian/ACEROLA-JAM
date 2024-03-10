@@ -11,7 +11,7 @@ public class ChargeController : MonoBehaviour
     private BossMoveTowardsPlayer bossMoveTowardsPlayer;
     void Start()
     {
-        BossReferences.instance.chargeVisuals.SetActive(false);
+        FindObjectOfType<BossReferences>().chargeVisuals.SetActive(false);
         bossMoveTowardsPlayer = GameObject.FindGameObjectWithTag("Boss").GetComponent<BossMoveTowardsPlayer>();
     }
 
@@ -23,15 +23,15 @@ public class ChargeController : MonoBehaviour
     {
         Vector3 targetPosition = transform.position + (transform.up * chargeDistance);
 
-        BossReferences.instance.chargeVisuals.SetActive(true);
+        FindObjectOfType<BossReferences>().chargeVisuals.SetActive(true);
         bossMoveTowardsPlayer.SetCanMove(false);
         yield return new WaitForSeconds(windupDuration);
-        BossReferences.instance.chargeVisuals.SetActive(false);
+        FindObjectOfType<BossReferences>().chargeVisuals.SetActive(false);
         bossMoveTowardsPlayer.MoveToPosition(targetPosition, chargeMoveDuration);
 
         yield return new WaitForSeconds(chargeMoveDuration);
         bossMoveTowardsPlayer.SetCanMove(true);
 
-        BossReferences.instance.comboAttackHandler.DoneWithAttack();
+        FindObjectOfType<BossReferences>().comboAttackHandler.DoneWithAttack();
     }
 }

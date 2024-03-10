@@ -6,6 +6,6 @@ public class A_Charge : BaseBossAttack, IBossAttack
 {
     public void DoBossAttack()
     {
-        BossReferences.instance.chargeController.ChargeAtPlayer();
+        FindObjectOfType<BossReferences>().chargeController.ChargeAtPlayer();
     }
 }

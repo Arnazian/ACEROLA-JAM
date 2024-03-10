@@ -9,7 +9,7 @@ public class A_ShootProjectile : BaseBossAttack, IBossAttack
     private Transform shootPoint;
     public void DoBossAttack()
     {
-        shootPoint = BossReferences.instance.shootPoint;
+        shootPoint = FindObjectOfType<BossReferences>().shootPoint;
 
         Instantiate(projectileToSpawn, shootPoint.position, Quaternion.identity);
         comboAttackHandler.DoneWithAttack();

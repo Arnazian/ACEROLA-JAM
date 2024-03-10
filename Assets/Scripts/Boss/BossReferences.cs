@@ -11,19 +11,5 @@ public class BossReferences: MonoBehaviour
     public GameObject chargeVisuals;
     public ChargeController chargeController;
     public ComboAttackHandler comboAttackHandler;
-
-
-    #region Singleton Implementation
-    public static BossReferences instance { get; private set; }
-
-    private void Awake()
-    {
-        if (instance != null)
-            Destroy(gameObject);
-        else
-            instance = this;
-    }
-    #endregion
-
 }
 

@@ -31,10 +31,15 @@ public class PromptTweens : MonoBehaviour
     [SerializeField] private float buttonFadeDelay;
     [SerializeField] private float buttonMoveDelay;
 
-    [Header("Move Offsets")]
+    [Header("Enable Move Offsets")]
     [SerializeField] private Vector3[] backgroundPositionOffset;
     [SerializeField] private Vector3[] textPositionOffset;
     [SerializeField] private Vector3 buttonPositionOffset;
+
+    [Header("Disable Move Offsets")]
+    [SerializeField] private Vector3[] backgroundPositionDisableOffset;
+    [SerializeField] private Vector3[] textPositionDisableOffse;
+    [SerializeField] private Vector3 buttonPositionDisableOffse;
 
     private List<Vector3> backgroundOriginalPositions = new List<Vector3>();
     private List<Vector3> textOriginalPositions = new List<Vector3>();
@@ -45,11 +50,14 @@ public class PromptTweens : MonoBehaviour
     private List<Tween> textTweens = new List<Tween>();
     private List<Tween> buttonTweens = new List<Tween>();
 
+    private DisablePromptTweens disablePromptTweens;
+
 
     private void Awake()
     {
         SetOriginalValues();
         SetEverythingToStartingPositions();
+        disablePromptTweens = GetComponent<DisablePromptTweens>();
     }
 
     private void OnEnable()
@@ -63,9 +71,10 @@ public class PromptTweens : MonoBehaviour
 
     public void DisableTweens()
     {
+        KillAllTweens();
         PlayerStateController.instance.UnStunPlayer();
         PauseGame.instance.DoResumeGame();
-        gameObject.SetActive(false);
+        disablePromptTweens.FadeEverythingOut();    
     }
 
     void SetOriginalValues()
@@ -147,4 +156,18 @@ public class PromptTweens : MonoBehaviour
         buttonTweens.Add(continueButton.transform.DOLocalMove(buttonOriginalPosition, buttonMoveDuration).SetDelay(buttonMoveDelay).SetUpdate(true));
     }
 
+    void KillAllTweens()
+    {
+        foreach (Tween t in bgTweens)
+            t.Kill();
+        bgTweens.Clear();
+
+        foreach (Tween t in textTweens)
+            t.Kill();
+        textTweens.Clear();
+
+        foreach (Tween t in buttonTweens)
+            t.Kill();
+        buttonTweens.Clear();
+    }
 }
