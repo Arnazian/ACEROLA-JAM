@@ -1,8 +1,8 @@
 ﻿#if UNITY_EDITOR
-using UnityEngine;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
-using System.Linq;
+using UnityEngine;
 using UnityEngine.Experimental.Rendering;
 using UnityEngine.Rendering;
 
@@ -89,7 +89,9 @@ public class AllIn1VfxCustomMaterialEditor : ShaderGUI
             DrawLine(Color.grey, 1, 3);
             DrawProperty(9);
             DrawLine(Color.grey, 1, 3);
-            Fog("Use Unity Fog", "FOG_ON");
+            OneLineKeywordToggle("Use Unity Fog", "FOG_ON");
+            DrawLine(Color.grey, 1, 3);
+            OneLineKeywordToggle("Use Custom Time", "TIMEISCUSTOM_ON");
             DrawLine(Color.grey, 1, 3);
             EditorGUIUtility.labelWidth = 140;
             materialEditor.EnableInstancingField();
@@ -438,7 +440,7 @@ public class AllIn1VfxCustomMaterialEditor : ShaderGUI
         if(tempValue != colorM.floatValue && !Application.isPlaying) SaveAndSetCustomConfig();
     }
 
-    private void Fog(string inspector, string keyword)
+    private void OneLineKeywordToggle(string inspector, string keyword)
     {
         bool toggle = oldKeyWords.Contains(keyword);
         bool ini = toggle;
@@ -593,14 +595,14 @@ public class AllIn1VfxCustomMaterialEditor : ShaderGUI
         else targetMat.DisableKeyword("SHAPE" + shapeToNumber + "CONTRAST_ON");
         if(oldKeyWords.Contains("SHAPE" + shapeFromNumber + "DISTORT_ON")) targetMat.EnableKeyword("SHAPE" + shapeToNumber + "DISTORT_ON");
         else targetMat.DisableKeyword("SHAPE" + shapeToNumber + "DISTORT_ON");
-        
+
         if(oldKeyWords.Contains("SHAPE" + shapeFromNumber + "ROTATE_ON")) targetMat.EnableKeyword("SHAPE" + shapeToNumber + "ROTATE_ON");
         else targetMat.DisableKeyword("SHAPE" + shapeToNumber + "ROTATE_ON");
         int rotationOffsetToIndex = 150 + ((shapeToNumber - 1) * 2); //150 is the first rotation property
         int rotationOffsetFromIndex = 150 + ((shapeFromNumber - 1) * 2);
         CopyShapeProperty(rotationOffsetToIndex, rotationOffsetFromIndex);
         CopyShapeProperty(rotationOffsetToIndex + 1, rotationOffsetFromIndex + 1); //Copy rotation speed
-        
+
         if(oldKeyWords.Contains("SHAPE" + shapeFromNumber + "SHAPECOLOR_ON")) targetMat.EnableKeyword("SHAPE" + shapeToNumber + "SHAPECOLOR_ON");
         else targetMat.DisableKeyword("SHAPE" + shapeToNumber + "SHAPECOLOR_ON");
         if(oldKeyWords.Contains("SHAPE" + shapeFromNumber + "SCREENUV_ON")) targetMat.EnableKeyword("SHAPE" + shapeToNumber + "SCREENUV_ON");
@@ -1038,7 +1040,7 @@ public class AllIn1VfxCustomMaterialEditor : ShaderGUI
         return toggle;
     }
 
-    private void SetShaderBasedOnEffectsAndPipeline()
+   private void SetShaderBasedOnEffectsAndPipeline()
     {
         oldKeyWords = targetMat.shaderKeywords;
         string targetShader = "AllIn1Vfx";
@@ -1076,11 +1078,18 @@ public class AllIn1VfxCustomMaterialEditor : ShaderGUI
         if(!targetMat.shader.name.Equals(targetShader))
         {
             int renderingQueue = targetMat.renderQueue;
-            targetMat.shader = Resources.Load(targetShader, typeof(Shader)) as Shader;
+            Shader shader = Resources.Load(targetShader, typeof(Shader)) as Shader;
+            if(shader == null)
+            {
+                EditorUtility.DisplayDialog("Missing Shader", 
+                    $"Shader {targetShader} not found. Import the appropriate Pipeline package as explained in the Documentation first section", "Ok");
+                return;
+            }
+            targetMat.shader = shader;
             targetMat.renderQueue = renderingQueue;
             EditorUtility.SetDirty(targetMat);
         }
-        
+
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
     }
@@ -1181,7 +1190,7 @@ public class AllIn1VfxCustomMaterialEditor : ShaderGUI
     {
         Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(padding + thickness));
         r.height = thickness;
-        r.y += (padding / 2);
+        r.y += (padding / 2f);
         r.x -= 2;
         r.width += 6;
         EditorGUI.DrawRect(r, color);

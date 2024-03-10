@@ -27,7 +27,7 @@ namespace AllIn1VfxToolkit
         public static readonly string atlasSavesPath = "Assets/AllIn1VfxToolkit/Demo & Assets/Textures/Shapes";
         public static readonly string materialAutoSetupSavesPath = "Assets/AllIn1VfxToolkit/Demo & Assets/Demo/Materials";
 
-        private const string Version = "1.4";
+        private const string Version = "1.6";
         public Vector2 scrollPosition = Vector2.zero;
 
         private DefaultAsset materialTargetFolder = null;
@@ -246,7 +246,7 @@ namespace AllIn1VfxToolkit
                             TextureImporter importer = AssetImporter.GetAtPath(subPath) as TextureImporter;
                             if(importer != null)
                             {
-                                Debug.Log("Normal Map saved inside the project: " + subPath);
+                                SceneViewNotificationAndLog("Normal Map saved inside the project: " + subPath);
                                 importer.filterMode = FilterMode.Bilinear;
                                 importer.textureType = TextureImporterType.NormalMap;
                                 importer.wrapMode = TextureWrapMode.Repeat;
@@ -254,7 +254,7 @@ namespace AllIn1VfxToolkit
                                 EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath(subPath, typeof(Texture)));
                             }
                         }
-                        else Debug.Log("Normal Map saved outside the project: " + path);
+                        else SceneViewNotificationAndLog("Normal Map saved outside the project: " + path);
                     }
 
                     isComputingNormals = 0;
@@ -326,13 +326,13 @@ namespace AllIn1VfxToolkit
                             TextureImporter importer = AssetImporter.GetAtPath(subPath) as TextureImporter;
                             if(importer != null)
                             {
-                                Debug.Log("Gradient saved inside the project: " + subPath);
+                                SceneViewNotificationAndLog("Gradient saved inside the project: " + subPath);
                                 importer.filterMode = gradientFiltering;
                                 importer.SaveAndReimport();
                                 EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath(subPath, typeof(Texture)));
                             }
                         }
-                        else Debug.Log("Gradient saved outside the project: " + path);
+                        else SceneViewNotificationAndLog("Gradient saved outside the project: " + path);
                     }
                 }
             }
@@ -465,13 +465,13 @@ namespace AllIn1VfxToolkit
                             TextureImporter importer = AssetImporter.GetAtPath(subPath) as TextureImporter;
                             if(importer != null)
                             {
-                                Debug.Log("Atlas saved inside the project: " + subPath);
+                                SceneViewNotificationAndLog("Atlas saved inside the project: " + subPath);
                                 importer.filterMode = atlasFiltering;
                                 importer.SaveAndReimport();
                                 EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath(subPath, typeof(Texture)));
                             }
                         }
-                        else Debug.Log("Atlas saved outside the project: " + path);
+                        else SceneViewNotificationAndLog("Atlas saved outside the project: " + path);
                     }
                 }
             }
@@ -662,13 +662,13 @@ namespace AllIn1VfxToolkit
                             TextureImporter importer = AssetImporter.GetAtPath(subPath) as TextureImporter;
                             if(importer != null)
                             {
-                                Debug.Log("Noise saved inside the project: " + subPath);
+                                SceneViewNotificationAndLog("Noise saved inside the project: " + subPath);
                                 importer.filterMode = noiseFiltering;
                                 importer.SaveAndReimport();
                                 EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath(subPath, typeof(Texture)));
                             }
                         }
-                        else Debug.Log("Noise saved outside the project: " + path);
+                        else SceneViewNotificationAndLog("Noise saved outside the project: " + path);
                     }
                 }
             }
@@ -696,61 +696,162 @@ namespace AllIn1VfxToolkit
 
         private void OtherTab()
         {
+            AutoSetupMaterialsToCurrentPipelineArea();
+            GUILayout.Space(10);
+            DrawLine(Color.grey, 1, 3);
+            GUILayout.Space(10);
+            DisableDepthAndSceneColorEffectsArea();
+            GUILayout.Space(10);
+            DrawLine(Color.grey, 1, 3);
+            GUILayout.Space(10);
+            SceneNotificationsToggle();
+        }
+
+        private void AutoSetupMaterialsToCurrentPipelineArea()
+        {
             GUILayout.Label("AllIn1Vfx Materials Shader Auto Setup", bigLabel);
             GUILayout.Space(20);
-            GUILayout.Label("Select the folder where AllIn1Vfx materials are contained", EditorStyles.boldLabel);
+            GUILayout.Label("Select the folder where the target AllIn1Vfx materials are contained", EditorStyles.boldLabel);
             HandleSaveFolderEditorPref("All1VfxAutoSetup", materialAutoSetupSavesPath, "Auto Setup");
-            
+
             GUILayout.Space(20);
             if(GUILayout.Button("Auto Setup Shaders for Materials in selected folder"))
             {
                 string autoSetupPath = PlayerPrefs.GetString("All1VfxAutoSetup");
-                Debug.Log("Starting Material Auto Setup at: " + autoSetupPath);
+                SceneViewNotificationAndLog("Starting Material Auto Setup at: " + autoSetupPath);
                 string[] filePaths = System.IO.Directory.GetFiles(autoSetupPath);
 
-                if (filePaths != null && filePaths.Length > 0)
+                bool isSuccess = true;
+                Material lastTargetMat = null;
+                if(filePaths != null && filePaths.Length > 0)
                 {
-                    for (int i = 0; i < filePaths.Length; i++)
+                    for(int i = 0; i < filePaths.Length; i++)
                     {
                         Object obj = UnityEditor.AssetDatabase.LoadAssetAtPath(filePaths[i], typeof(Material));
-                        if (obj is Material mat)
+                        if(obj is Material mat)
+                        {
+                            lastTargetMat = mat;
+                            string shaderName = mat.shader.name;
+                            if(shaderName.Contains("AllIn1Vfx/"))
+                            {
+                                shaderName = shaderName.Replace("AllIn1Vfx/", "");
+                                if(shaderName.Contains("AllIn1Vfx")) //Means it is a variation of the asset main shader
+                                {
+                                    isSuccess &= SetShaderBasedOnEffectsAndPipeline(mat);
+                                }
+                            }
+                            else if(shaderName.Contains("Hidden/InternalError")) //If the material is broken we'll override it by a AllIn1Vfx one
+                            {
+                                isSuccess &= SetShaderBasedOnEffectsAndPipeline(mat);
+                            }
+                        }
+                    }
+                    
+                    if(!isSuccess){
+                        string targetShader = GetTargetShaderName(lastTargetMat);
+                        EditorUtility.DisplayDialog("Missing Shader", 
+                        $"Shader {targetShader} not found. Import the appropriate Pipeline package as explained in the Documentation first section", "Ok");
+                    }
+                }
+
+                AssetDatabase.SaveAssets();
+                AssetDatabase.Refresh();
+
+                if(isSuccess) SceneViewNotificationAndLog("Material Auto Setup finished");
+            }
+        }
+        
+        private void DisableDepthAndSceneColorEffectsArea()
+        {
+            GUILayout.Label("Disable Depth And Scene Color effects from materials", bigLabel);
+            GUILayout.Label("These effects are: Soft Particles, Intersection Glow, Screen Distortion");
+            GUILayout.Space(20);
+            GUILayout.Label("Select the folder where the target AllIn1Vfx materials are contained", EditorStyles.boldLabel);
+            HandleSaveFolderEditorPref("DepthAndSceneColorPath", materialAutoSetupSavesPath, "Effects Disable");
+
+            GUILayout.Space(20);
+            if(GUILayout.Button("Disable Depth and Scene Color Effects for Materials in selected folder"))
+            {
+                string autoSetupPath = PlayerPrefs.GetString("DepthAndSceneColorPath");
+                SceneViewNotificationAndLog("Starting to Disable Depth and Scene Color Effects at: " + autoSetupPath);
+                string[] filePaths = System.IO.Directory.GetFiles(autoSetupPath);
+
+                if(filePaths != null && filePaths.Length > 0)
+                {
+                    for(int i = 0; i < filePaths.Length; i++)
+                    {
+                        Object obj = UnityEditor.AssetDatabase.LoadAssetAtPath(filePaths[i], typeof(Material));
+                        if(obj is Material mat)
                         {
                             string shaderName = mat.shader.name;
                             if(shaderName.Contains("AllIn1Vfx/"))
                             {
                                 shaderName = shaderName.Replace("AllIn1Vfx/", "");
-                                if(shaderName.Contains("Vfx")) //Means is a variation of the asset main shader
+                                if(shaderName.Contains("Vfx")) //Means it is a variation of the asset main shader
                                 {
-                                    SetShaderBasedOnEffectsAndPipeline(mat);
+                                    if(mat.IsKeywordEnabled("SOFTPART_ON")) mat.DisableKeyword("SOFTPART_ON");
+                                    if(mat.IsKeywordEnabled("DEPTHGLOW_ON")) mat.DisableKeyword("DEPTHGLOW_ON");
+                                    if(mat.IsKeywordEnabled("SCREENDISTORTION_ON")) mat.DisableKeyword("SCREENDISTORTION_ON");
                                 }
                             }
                         }
                     }
                 }
-                
+
                 AssetDatabase.SaveAssets();
                 AssetDatabase.Refresh();
-                
-                Debug.Log("Material Auto Setup finished");
+
+                SceneViewNotificationAndLog("Disable Depth and Scene Color Effects finished");
             }
         }
         
-        private void SetShaderBasedOnEffectsAndPipeline(Material targetMat)
+        private static void SceneNotificationsToggle()
+        {
+            float previousLabelWidth = EditorGUIUtility.labelWidth;
+            EditorGUIUtility.labelWidth = 200f;
+            bool areNotificationsEnabled = EditorPrefs.GetInt("DisplaySceneViewNotifications", 1) == 1;
+            areNotificationsEnabled = EditorGUILayout.Toggle("Display Scene View Notifications", areNotificationsEnabled);
+            EditorPrefs.SetInt("DisplaySceneViewNotifications", areNotificationsEnabled ? 1 : 0);
+            EditorGUIUtility.labelWidth = previousLabelWidth;
+        }
+
+        private bool SetShaderBasedOnEffectsAndPipeline(Material targetMat)
+        {
+            string targetShader = GetTargetShaderName(targetMat);
+
+            if(!targetMat.shader.name.Equals(targetShader))
+            {
+                int renderingQueue = targetMat.renderQueue;
+                float zWriteValue = targetMat.GetFloat("_ZWrite");
+                Shader shader = Resources.Load(targetShader, typeof(Shader)) as Shader;
+                if(shader == null) return false;
+                targetMat.shader = shader;
+                targetMat.renderQueue = renderingQueue;
+                targetMat.SetFloat("_ZWrite", zWriteValue);
+                EditorUtility.SetDirty(targetMat);
+            }
+            return true;
+        }
+
+        private string GetTargetShaderName(Material targetMat)
         {
             string[] oldKeyWords = targetMat.shaderKeywords;
             string targetShader = "AllIn1Vfx";
-        
             string pipeline = "Built-In";
             RenderPipelineAsset renderPipelineAsset = GraphicsSettings.renderPipelineAsset;
-            if(renderPipelineAsset != null) {
-                switch(renderPipelineAsset.GetType().Name) {
-                    case "UniversalRenderPipelineAsset": pipeline = "URP";
+            if(renderPipelineAsset != null)
+            {
+                switch(renderPipelineAsset.GetType().Name)
+                {
+                    case"UniversalRenderPipelineAsset":
+                        pipeline = "URP";
                         break;
-                    case "HDRenderPipelineAsset": pipeline = "HDRP";
+                    case"HDRenderPipelineAsset":
+                        pipeline = "HDRP";
                         break;
                 }
             }
-        
+
             if(pipeline.Equals("Built-In"))
             {
                 if(oldKeyWords.Contains("SCREENDISTORTION_ON")) targetShader = "AllIn1VfxGrabPass";
@@ -766,13 +867,7 @@ namespace AllIn1VfxToolkit
                 targetShader = "AllIn1VfxHDRP";
             }
 
-            if(!targetMat.shader.name.Equals(targetShader))
-            {
-                int renderingQueue = targetMat.renderQueue;
-                targetMat.shader = Resources.Load(targetShader, typeof(Shader)) as Shader;
-                targetMat.renderQueue = renderingQueue;
-                EditorUtility.SetDirty(targetMat);
-            }
+            return targetShader;
         }
 
         private static bool IsAssetAFolder(Object obj)
@@ -796,7 +891,7 @@ namespace AllIn1VfxToolkit
         {
             Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(padding + thickness));
             r.height = thickness;
-            r.y += (padding / 2);
+            r.y += (padding / 2f);
             r.x -= 2;
             r.width += 6;
             EditorGUI.DrawRect(r, color);
@@ -1072,7 +1167,7 @@ namespace AllIn1VfxToolkit
                 AssetDatabase.ImportAsset(pingPath);
                 AssetDatabase.Refresh();
                 EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath(pingPath, typeof(Texture)));
-                Debug.Log("Edited Image saved to: " + fullPath);
+                SceneViewNotificationAndLog("Edited Image saved to: " + fullPath);
                 
                 editorTexInput = null;
                 editorTex = null;
@@ -1358,6 +1453,25 @@ namespace AllIn1VfxToolkit
         private int GetPixelIndex(int x, int y, int width)
         {
             return y * width + x;
+        }
+        
+        public static void SceneViewNotificationAndLog(string message)
+        {
+            Debug.Log(message);
+            ShowSceneViewNotification(message);
+        }
+
+        public static void ShowSceneViewNotification(string message)
+        {
+            bool showNotification = EditorPrefs.GetInt("DisplaySceneViewNotifications", 1) == 1;
+            if(!showNotification) return;
+            
+            GUIContent content = new GUIContent(message);
+            #if UNITY_2019_1_OR_NEWER
+            SceneView.lastActiveSceneView.ShowNotification(content, 1.5f);
+            #else
+            SceneView.lastActiveSceneView.ShowNotification(content);
+            #endif
         }
     }
 }

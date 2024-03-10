@@ -464,7 +464,7 @@ namespace AllIn1VfxToolkit
         {
             Rect r = EditorGUILayout.GetControlRect(GUILayout.Height(padding + thickness));
             r.height = thickness;
-            r.y += (padding / 2);
+            r.y += (padding / 2f);
             r.x -= 2;
             r.width += 6;
             EditorGUI.DrawRect(r, color);

@@ -43,10 +43,10 @@ namespace AllIn1VfxToolkit
                 if(sr.sharedMaterial == null)
                 {
                     CleanMaterial();
-                    MakeNewMaterial();
+                    MakeNewMaterial(notifyWhenDone: true);
                 }
 
-                if(!sr.sharedMaterial.shader.name.Contains("Vfx")) MakeNewMaterial();
+                if(!sr.sharedMaterial.shader.name.Contains("Vfx")) MakeNewMaterial(notifyWhenDone: true);
                 else matAssigned = true;
             }
             else
@@ -54,28 +54,32 @@ namespace AllIn1VfxToolkit
                 Graphic img = GetComponent<Graphic>();
                 if(img != null)
                 {
-                    if(!img.material.shader.name.Contains("Vfx")) MakeNewMaterial();
+                    if(!img.material.shader.name.Contains("Vfx")) MakeNewMaterial(notifyWhenDone: true);
                     else matAssigned = true;
                 }
             }
         }
 #endif
 
-        private void MakeNewMaterial(string shaderName = "AllIn1Vfx")
+        private void MakeNewMaterial(string shaderName = "AllIn1Vfx", bool notifyWhenDone = false)
         {
-            SetMaterial(AfterSetAction.Clear, shaderName);
+            bool operationSuccessful = SetMaterial(AfterSetAction.Clear, shaderName);
+            #if UNITY_EDITOR
+            if(notifyWhenDone && operationSuccessful) AllIn1VfxWindow.ShowSceneViewNotification("AllIn1Vfx: Material Created and Assigned");
+            #endif
         }
 
-        public void MakeCopy()
+        public bool MakeCopy()
         {
             if(currMaterial == null)
             {
-                if(FetchCurrentMaterial()) return;
+                if(FetchCurrentMaterial()) return false;
             }
 
             string shaderName = currMaterial.shader.name;
             if(shaderName.Contains("AllIn1Vfx/")) shaderName = shaderName.Replace("AllIn1Vfx/", "");
             SetMaterial(AfterSetAction.CopyMaterial, shaderName);
+            return true;
         }
 
         private bool FetchCurrentMaterial()
@@ -111,7 +115,7 @@ namespace AllIn1VfxToolkit
             SetMaterial(AfterSetAction.Reset, shaderName);
         }
 
-        private void SetMaterial(AfterSetAction action, string shaderName)
+        private bool SetMaterial(AfterSetAction action, string shaderName)
         {
             Shader allIn1VfxShader = Resources.Load(shaderName, typeof(Shader)) as Shader;
 
@@ -144,22 +148,23 @@ namespace AllIn1VfxToolkit
                     }
                 }
 
-                if(!rendererExists)
-                {
-                    MissingRenderer();
-                    return;
-                }
-                else
-                {
-                    SetSceneDirty();
-                }
+                if(!rendererExists) MissingRenderer();
+                else SetSceneDirty();
+
+                return rendererExists;
             }
             else if(allIn1VfxShader == null)
             {
-                Debug.LogError(
-                    "Make sure the AllIn1Vfx shader variants are inside the Resource folder!   You looked for " +
-                    shaderName);
+                #if UNITY_EDITOR
+                string logErrorMessage = "Make sure the AllIn1Vfx shader variants are inside the Resource folder! You looked for " + shaderName;
+                Debug.LogError(logErrorMessage);
+                AllIn1VfxWindow.ShowSceneViewNotification(logErrorMessage);          
+                #endif
+
+                return false;
             }
+            
+            return false;
         }
 
         private void DoAfterSetAction(AfterSetAction action)
@@ -175,7 +180,7 @@ namespace AllIn1VfxToolkit
             }
         }
 
-        public void TryCreateNew()
+        public bool TryCreateNew()
         {
             bool rendererExists = false;
             Renderer sr = GetComponent<Renderer>();
@@ -214,6 +219,7 @@ namespace AllIn1VfxToolkit
             }
 
             SetSceneDirty();
+            return rendererExists;
         }
 
         public void ClearAllKeywords()
@@ -347,7 +353,7 @@ namespace AllIn1VfxToolkit
             SetSceneDirty();
         }
 
-        public void SaveMaterial()
+        public bool SaveMaterial()
         {
 #if UNITY_EDITOR
             string path = AllIn1VfxWindow.materialsSavesPath;
@@ -358,7 +364,7 @@ namespace AllIn1VfxToolkit
             {
                 EditorUtility.DisplayDialog("The desired save folder doesn't exist",
                     "Go to Window -> AllIn1VfxWindow and set a valid folder", "Ok");
-                return;
+                return false;
             }
 
             path += gameObject.name;
@@ -370,7 +376,9 @@ namespace AllIn1VfxToolkit
             else DoSaving(fullPath);
 
             SetSceneDirty();
+            return true;
 #endif
+            return false;
         }
 
         private void SaveMaterialWithOtherName(string path, int i = 1)
@@ -421,7 +429,7 @@ namespace AllIn1VfxToolkit
                 createdMat = new Material(matToSave);
                 currMaterial = createdMat;
                 AssetDatabase.CreateAsset(createdMat, fileName);
-                Debug.Log(fileName + " has been saved!");
+                AllIn1VfxWindow.SceneViewNotificationAndLog(fileName + " has been saved!");
                 EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath(fileName, typeof(Material)));
             }
 
@@ -442,9 +450,14 @@ namespace AllIn1VfxToolkit
 #if UNITY_EDITOR
             if(!Application.isPlaying) EditorSceneManager.MarkAllScenesDirty();
 
-            //If you get an error here please delete the 2 lines below
+            //If you get an error here please delete the code block below
+            #if UNITY_2021_2_OR_NEWER
             var prefabStage = UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
-            if(prefabStage != null) EditorSceneManager.MarkSceneDirty(prefabStage.scene);
+            #else
+            var prefabStage = UnityEditor.Experimental.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
+            #endif
+            if (prefabStage != null) EditorSceneManager.MarkSceneDirty(prefabStage.scene);
+            //Until here
 #endif
         }
 
@@ -461,7 +474,7 @@ namespace AllIn1VfxToolkit
         }
 
 #if UNITY_EDITOR
-        public void ApplyMaterialToHierarchy()
+        public bool ApplyMaterialToHierarchy()
         {
             Renderer sr = GetComponent<Renderer>();
             Graphic img = GetComponent<Graphic>();
@@ -474,7 +487,7 @@ namespace AllIn1VfxToolkit
             else
             {
                 MissingRenderer();
-                return;
+                return false;
             }
 
             List<Transform> children = new List<Transform>();
@@ -489,6 +502,8 @@ namespace AllIn1VfxToolkit
                     if(img != null) img.material = matToApply;
                 }
             }
+
+            return true;
         }
 
         public void CheckIfValidTarget()
@@ -507,7 +522,7 @@ namespace AllIn1VfxToolkit
             }
         }
 
-        public void RenderToImage()
+        public bool RenderToImage()
         {
             if(currMaterial == null)
             {
@@ -515,7 +530,7 @@ namespace AllIn1VfxToolkit
                 if(currMaterial == null)
                 {
                     MissingRenderer();
-                    return;
+                    return false;
                 }
             }
 
@@ -536,6 +551,7 @@ namespace AllIn1VfxToolkit
                         "). This means that the material you are using has no Main Texture or that the texture couldn't be reached through the Renderer component you are using." +
                         " Please make sure to have a valid Main Texture in the Material", "Ok");
             }
+            return tex != null;
         }
 
         private void RenderAndSaveTexture(Material targetMaterial, Texture targetTexture)
@@ -576,8 +592,8 @@ namespace AllIn1VfxToolkit
             AssetDatabase.Refresh();
             DestroyImmediate(resultTex);
             EditorGUIUtility.PingObject(AssetDatabase.LoadAssetAtPath(pingPath, typeof(Texture)));
-            Debug.Log("Render Image saved to: " + fullPath + " with scale: " + scaleSlider +
-                      " (it can be changed in Window -> AllIn1VfxWindow)");
+            AllIn1VfxWindow.SceneViewNotificationAndLog("Render Image saved to: " + fullPath + " with scale: " + scaleSlider +
+                                                        " (it can be changed in Window -> AllIn1VfxWindow)");
         }
 
         private string GetNewValidPath(string path, int i = 1)
