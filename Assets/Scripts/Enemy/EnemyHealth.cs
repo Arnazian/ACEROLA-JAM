@@ -28,6 +28,7 @@ public class EnemyHealth : MonoBehaviour
 
     public void EnemyDeath()
     {
+        AudioManager.instance.PlayEnemyDeath();
         CameraShake.instance.EnemyDeathShake(deathShakeForce);
         Instantiate(deathParticles, transform.position, Quaternion.identity);
         Destroy(gameObject);

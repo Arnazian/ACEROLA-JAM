@@ -13,8 +13,7 @@ public class PlayerStateController : MonoBehaviour
     private Dash dash;
 
     private void Start()
-    {
-        Cursor.lockState = CursorLockMode.Confined;
+    { 
         dash = GetComponent<Dash>();
         playerLightController = GetComponent<PlayerLightController>();
         cocosTopDownController = GetComponent<CocosTopDownController>();

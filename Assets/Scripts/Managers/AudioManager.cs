@@ -9,10 +9,13 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource hitObject;
 
     [SerializeField] private AudioSource hitEnemy;
+    [SerializeField] private AudioSource hitEnemyStrong;
     [SerializeField] private AudioSource music;
+    [SerializeField] private AudioSource enemyDeath;
 
     [SerializeField] private Vector2 hitObjectPitch;
     [SerializeField] private Vector2 hitEnemyPitch;
+    [SerializeField] private Vector2 hitEnemyStrongPitch;
 
     [SerializeField] private float musicTweenDuration;
     private float musicVolume;
@@ -26,11 +29,18 @@ public class AudioManager : MonoBehaviour
     {
         hitEnemy.pitch = Random.Range(hitEnemyPitch.x, hitEnemyPitch.y);
         hitEnemy.Play();
+        hitEnemyStrong.pitch = Random.Range(hitEnemyStrongPitch.x, hitEnemyStrongPitch.y);
+        hitEnemyStrong.Play();
     }
     public void PlayHitObject()
     {
         hitObject.pitch = Random.Range(hitObjectPitch.x, hitObjectPitch.y);
         hitObject.Play();
+    }
+
+    public void PlayEnemyDeath()
+    {
+        enemyDeath.Play();
     }
 
     public void PlayMusic()

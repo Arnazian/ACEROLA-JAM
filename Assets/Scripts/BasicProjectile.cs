@@ -15,8 +15,11 @@ public class BasicProjectile : MonoBehaviour
     [SerializeField] private bool destroyAfterTime = false;
     [SerializeField] private float destroyAfterSeconds;
 
-    [SerializeField] private Vector2 pitch;
-    private AudioSource audioSource;
+    [SerializeField] private Vector2 spellPitch;
+    [SerializeField] private Vector2 strongPitch;
+    [SerializeField] private AudioSource spellSound;
+    [SerializeField] private AudioSource strongSound;
+
     private string enemyTag = "Enemy";
     private string objectTag = "Object";
     private bool disabled = false;
@@ -25,9 +28,10 @@ public class BasicProjectile : MonoBehaviour
 
     void Start()
     {
-        audioSource = GetComponent<AudioSource>();
-        audioSource.pitch = Random.Range(pitch.x, pitch.y);         
-        audioSource.Play();
+        spellSound.pitch = Random.Range(spellPitch.x, spellPitch.y);
+        strongSound.pitch = Random.Range(strongPitch.x, strongPitch.y);
+        spellSound.Play();
+        strongSound.Play();
         rb = GetComponent<Rigidbody2D>();
         if (destroyAfterTime) { StartCoroutine(DestroyObjectAfterSeconds(destroyAfterSeconds)); }
         rb.velocity = transform.up * projectileSpeed;

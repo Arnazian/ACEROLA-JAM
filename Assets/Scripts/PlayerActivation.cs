@@ -16,13 +16,14 @@ public class PlayerActivation : MonoBehaviour
     [SerializeField] private float secondsAfterBaseLightFade;
     [SerializeField] private float secondsAfterArtFade;
     [SerializeField] private float secondsAfterFlashLightFade;
+    [SerializeField] private float secondsBeforeMovePrompt;
 
     [Header("Fade Durations")]
     [SerializeField] private float baseLightFadeInDuration;
     [SerializeField] private float artFadeInDuration;
     [SerializeField] private float flashLightFadeInDuration;
 
-
+    [SerializeField] private TutorialPrompts tutorialPrompts;
     private PlayerHealth playerHeatlh;
 
     private void Start()
@@ -60,12 +61,14 @@ public class PlayerActivation : MonoBehaviour
         playerHeatlh.EnableHealthBar();
         playerLightController.FadeInFlashLight(flashLightFadeInDuration);
         yield return new WaitForSeconds(secondsAfterFlashLightFade);
-
         particles.SetActive(true);
    
             
  ;
         PlayerStateController.instance.UnStunPlayer();
         CameraShake.instance.ResetCameraTarget();
+
+        yield return new WaitForSeconds(secondsBeforeMovePrompt);
+        tutorialPrompts.OpenMovePormpt();
     }
 }

@@ -28,8 +28,8 @@ public class ButtonHighlightController : MonoBehaviour
 
         if (muzzleMaterial != null)
         {
-            muzzleMaterial.DOFloat(1f, "_FadeAmount", 0);
-            muzzleMaterial2.DOFloat(1f, "_FadeAmount", 0);
+            muzzleMaterial.DOFloat(1f, "_FadeAmount", 0).SetUpdate(true);
+            muzzleMaterial2.DOFloat(1f, "_FadeAmount", 0).SetUpdate(true);
         }
        
     }
@@ -41,13 +41,13 @@ public class ButtonHighlightController : MonoBehaviour
             particles.Play();
         if (muzzleMaterial != null)
         {
-            muzzleMaterial.DOFloat(0f, "_FadeAmount", muzzleFadeDuration);
-            muzzleMaterial2.DOFloat(0f, "_FadeAmount", muzzleFadeDuration);
+            muzzleMaterial.DOFloat(0f, "_FadeAmount", muzzleFadeDuration).SetUpdate(true);
+            muzzleMaterial2.DOFloat(0f, "_FadeAmount", muzzleFadeDuration).SetUpdate(true);
         }
             
-        objectToScale.DOScale(endScale, scaleDuration);
+        objectToScale.DOScale(endScale, scaleDuration).SetUpdate(true);
         Vector3 positionToMoveTo = originalPosition + positionOffset;
-        objectToScale.DOLocalMove(positionToMoveTo, moveDuration);
+        objectToScale.DOLocalMove(positionToMoveTo, moveDuration).SetUpdate(true);
     }
 
     public void MouseExitVisuals()
@@ -57,11 +57,11 @@ public class ButtonHighlightController : MonoBehaviour
 
         if (muzzleMaterial != null)
         {
-            muzzleMaterial.DOFloat(1f, "_FadeAmount", muzzleFadeDuration);
-            muzzleMaterial2.DOFloat(1f, "_FadeAmount", muzzleFadeDuration);
+            muzzleMaterial.DOFloat(1f, "_FadeAmount", muzzleFadeDuration).SetUpdate(true);
+            muzzleMaterial2.DOFloat(1f, "_FadeAmount", muzzleFadeDuration).SetUpdate(true);
         }
       
-        objectToScale.DOScale(originalScale, scaleDuration);
-        objectToScale.DOLocalMove(originalPosition, moveDuration);
+        objectToScale.DOScale(originalScale, scaleDuration).SetUpdate(true);
+        objectToScale.DOLocalMove(originalPosition, moveDuration).SetUpdate(true);
     }
 }
