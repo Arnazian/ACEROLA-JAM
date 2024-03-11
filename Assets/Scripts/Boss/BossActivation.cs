@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.Events;
 
 public class BossActivation : MonoBehaviour
 {
+    public UnityEvent onEncounterDone;
     private Transform player;
     [SerializeField] private float distanceToActivate;
     private float distanceToPlayer;
     private bool isActive = false;
 
-
+    [SerializeField] private float secondsToFadeLightAway;
     [SerializeField] private float secondsAfterCameraOnSelf;
-    [SerializeField] private float secondsToFadeLight;
+    [SerializeField] private float secondsToFadeLightIn;
     [SerializeField] private float secondsToResetCamera;
     [SerializeField] private Light2D selfLight;
     [SerializeField] private float lightIntensity;
@@ -44,27 +46,6 @@ public class BossActivation : MonoBehaviour
         selfLight.intensity = 0;
     }
 
-    
-    void Update()
-    {
-        CheckDistanceToPlayer();
-    }
-
-    
-    void CheckDistanceToPlayer()
-    {
-        if (isActive)
-            return;
-
-
-        /*
-        distanceToPlayer = Vector2.Distance(player.position, transform.position);
-        if (distanceToPlayer < distanceToActivate)
-            StartCoroutine(CoroutineActivateBoss());
-        */
-        
-    }
-
     public void FirstEncounter()
     {
         StartCoroutine(CoroutineEncounter());
@@ -86,13 +67,14 @@ public class BossActivation : MonoBehaviour
         CameraShake.instance.SetCameraTarget(transform);
         yield return new WaitForSeconds(secondsAfterCameraOnSelf);
 
-        bossGrowTransform.DOScale(bossGrowSize, secondsToFadeLight);
-        DOTween.To(() => selfLight.intensity, x => selfLight.intensity = x, lightIntensity, secondsToFadeLight);
-        yield return new WaitForSeconds(secondsToFadeLight);
+        bossGrowTransform.DOScale(bossGrowSize, secondsToFadeLightIn);
+        DOTween.To(() => selfLight.intensity, x => selfLight.intensity = x, lightIntensity, secondsToFadeLightIn);
+        yield return new WaitForSeconds(secondsToFadeLightIn);
 
         Vector3 tinyScale = new Vector3(0f, 0f, 1f);
         bossGrowTransform.DOScale(tinyScale, bossShrinkDuration);
         Instantiate(disappearEffect, transform.position, Quaternion.identity);
+        onEncounterDone.Invoke();
 
         yield return new WaitForSeconds(secondsToResetCamera);
 
@@ -102,7 +84,8 @@ public class BossActivation : MonoBehaviour
         // spawn minions
         // enable stage 2
         // destroy self
-        Destroy(gameObject);
+        DOTween.To(() => selfLight.intensity, x => selfLight.intensity = x, 0f, secondsToFadeLightAway).OnComplete(() =>
+            Destroy(gameObject));
     }
 
     void ActivateAttackMode()

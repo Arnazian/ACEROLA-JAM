@@ -2,17 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.Events;
 
 public class SlideForward : MonoBehaviour
 {
     [SerializeField] private float moveDuration;
     [SerializeField] private Vector2 moveCoolDown;
     [SerializeField] private Vector2 moveDistance;
+    private Rigidbody2D rb;
     private float moveCoolDownCur;
 
     private bool isSliding = false;
 
-    private bool canMove = true;
+    private bool canMove = false;
+    private BaseEnemyActivation baseEnemyActivation;
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        baseEnemyActivation = GetComponent<BaseEnemyActivation>();
+        baseEnemyActivation.onActivate.AddListener(ActivateMovement);
+    }
+
+    void ActivateMovement()
+    {
+        canMove = true;
+    }    
 
     void Update()
     {
@@ -32,16 +46,14 @@ public class SlideForward : MonoBehaviour
 
     void DoSlideForward()
     {
-        Debug.Log("Started SLiding");
         isSliding = true;
         moveCoolDownCur = Random.Range(moveCoolDown.x, moveCoolDown.y);
 
         float randomDistance = Random.Range(moveDistance.x, moveDistance.y);
         Vector3 targetPosition = transform.position + (transform.up * randomDistance);
 
-        transform.DOMove(targetPosition, moveDuration).OnComplete(() =>
+        rb.DOMove(targetPosition, moveDuration).OnComplete(() =>
             isSliding = false );
-        Debug.Log("after started do move");
     }
 
 

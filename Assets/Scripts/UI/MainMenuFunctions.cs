@@ -5,6 +5,8 @@ using DG.Tweening;
 using UnityEngine.SceneManagement;
 public class MainMenuFunctions : MonoBehaviour
 {
+    [SerializeField] private float gameStartFadeDuration;
+    [SerializeField] private Material gameStartFade;
     [SerializeField] private Material foreGroundFade;
     [SerializeField] private float fadeDuration;
     [SerializeField] private float secondsBeforeLoadingScene;
@@ -13,7 +15,12 @@ public class MainMenuFunctions : MonoBehaviour
 
     private void Start()
     {
-        foreGroundFade.DOFloat(1f, "_FadeAmount", 0);
+       
+       foreGroundFade.DOFloat(1f, "_FadeAmount", 0);
+
+       gameStartFade.DOFloat(0f, "_FadeAmount", 0f).OnComplete(() =>
+       gameStartFade.DOFloat(1f, "_FadeAmount", gameStartFadeDuration));
+       FindObjectOfType<CursorController>().EnableFancyMouse();
     }
     public void StartGame()
     {

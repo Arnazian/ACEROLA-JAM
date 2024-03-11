@@ -58,6 +58,11 @@ public class AudioManager : MonoBehaviour
         music.Play();
         music.DOFade(musicVolume, musicTweenDuration);
     }
+
+    public void FadeMusicOut()
+    {
+        music.DOFade(0f, musicTweenDuration);
+    }
     #region Singleton Implementation
     public static AudioManager instance;
     private void Awake()

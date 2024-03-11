@@ -106,7 +106,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1141922137
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 0.69411767}
@@ -134,6 +134,8 @@ GameObject:
   - component: {fileID: 5772869292381188388}
   - component: {fileID: 5520232774585351582}
   - component: {fileID: 1045393876800025814}
+  - component: {fileID: 4191821549623514231}
+  - component: {fileID: 4396224599683486026}
   m_Layer: 0
   m_Name: BasicEnemy
   m_TagString: Enemy
@@ -187,7 +189,7 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -205,7 +207,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 432ff61ca6f3dab4e96c7d0337bc16ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isBoss: 0
+  onEnemyDeath:
+    m_PersistentCalls:
+      m_Calls: []
   maxHealth: 3
   deathShakeForce: 0.3
   deathParticles: {fileID: 9057820705938014257, guid: 8c2e3508bff1d004ab3d871d45417a0f, type: 3}
@@ -268,6 +272,57 @@ MonoBehaviour:
   intensity: 0
   fadeDuration: 0.2
   distanceToActivate: 10
+--- !u!114 &4191821549623514231
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4137123347030193221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a3fd73a6269ac847b4831bd8d6ba76e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  activateOnStart: 1
+  onActivate:
+    m_PersistentCalls:
+      m_Calls: []
+  doGrow: 1
+  objectsToGrow:
+  - {fileID: 5522602032108694970}
+  - {fileID: 9183196793337338850}
+  - {fileID: 4040837696532073897}
+  growDuration: 0.5
+  secondsToActivate: 2
+  objectsToEnable: []
+--- !u!50 &4396224599683486026
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4137123347030193221}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 1
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &5179823386004021355
 GameObject:
   m_ObjectHideFlags: 0
@@ -5065,7 +5120,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1141922137
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_RenderMode: 0
   m_MeshDistribution: 0
@@ -5270,7 +5325,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1141922137
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: cd8eb6ebc45010c4a864ce9c9a53df10, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -10109,7 +10164,7 @@ ParticleSystemRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1141922137
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 1
   m_RenderMode: 0
   m_MeshDistribution: 0

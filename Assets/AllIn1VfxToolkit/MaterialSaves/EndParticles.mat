@@ -8,18 +8,18 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: EndParticles
-  m_Shader: {fileID: 4800000, guid: 6eb86e4931b506a408fd1477edec61ea, type: 3}
+  m_Shader: {fileID: 4800000, guid: b430983578466934c944e7171b4c372c, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - ADDITIVECONFIG_ON
+  - SHAPE1DISTORT_ON
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap:
-    RenderType: Transparent
+  m_CustomRenderQueue: 3000
+  stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
@@ -82,7 +82,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ShapeDistortTex:
-        m_Texture: {fileID: 2800000, guid: fcb027caad6963b4a80539bbce0d10e9, type: 3}
+        m_Texture: {fileID: 2800000, guid: 605375ee42cdb484a81826eda94af6d7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _TrailWidthGradient:
@@ -95,7 +95,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Alpha: 1
+    - _Alpha: 0.5
     - _AlphaCutoffValue: 0.25
     - _AlphaFadeAmount: -0.1
     - _AlphaFadePow: 1
@@ -196,7 +196,7 @@ Material:
     - _ShapeBrightness: 0
     - _ShapeColorWeight: 1
     - _ShapeContrast: 1
-    - _ShapeDistortAmount: 0.5
+    - _ShapeDistortAmount: 1
     - _ShapeDistortXSpeed: 0.1
     - _ShapeDistortYSpeed: 0.1
     - _ShapeRotationOffset: 0

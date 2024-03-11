@@ -6,6 +6,7 @@ using DG.Tweening;
 
 public class PlayerHealth : MonoBehaviour
 {
+    [SerializeField] private DeathMenu deathMenu;
     [SerializeField] private GameObject healthBarObject;
     [SerializeField] private Slider[] healthBarSliders;
     [SerializeField] private float startOfGameSliderChangeDuration;
@@ -63,8 +64,11 @@ public class PlayerHealth : MonoBehaviour
     {
         isInvulnerable = newValue;
     }
+    public bool GetIsInvulnerable() => isInvulnerable;
     void PlayerDeath()
     {
-        Destroy(gameObject);
+        SetIsInvulnerable(true);
+        deathMenu.EnableDeathMenu();
+        PlayerStateController.instance.StunPlayer();
     }
 }

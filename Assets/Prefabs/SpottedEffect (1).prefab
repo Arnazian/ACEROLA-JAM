@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6055146449104935047}
   - component: {fileID: 1539990727794036955}
   - component: {fileID: 5336295433793529738}
-  - component: {fileID: 9211379658581064215}
+  - component: {fileID: 1689641477002924463}
   m_Layer: 0
   m_Name: Smoke
   m_TagString: Untagged
@@ -117,7 +117,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 5
+      scalar: 10
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -224,7 +224,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 1, g: 1, b: 1, a: 0.19607843}
+      maxColor: {r: 1, g: 1, b: 1, a: 0.5294118}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -4836,7 +4836,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c471de5bb6ef31f409b76d34d6e1e935, type: 2}
+  - {fileID: 2100000, guid: 423099946086f364eb4729312384e7a5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -4889,7 +4889,7 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &9211379658581064215
+--- !u!114 &1689641477002924463
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4898,9 +4898,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 2329361362455827749}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c5dbbb1030d96d438905b0e01caa8d9, type: 3}
+  m_Script: {fileID: 11500000, guid: ee158225ee1e59f4791627785501d950, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shaderTypes: 3
+  normalStrength: 5
+  normalSmoothing: 1
+  computingNormal: 0
 --- !u!1 &4081184092335191120
 GameObject:
   m_ObjectHideFlags: 0
@@ -9820,7 +9824,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9eb792a33789f74eb04de659b28ecb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  secondsToDestroy: 10
+  secondsToDestroy: 15
 --- !u!1 &4277861596004028142
 GameObject:
   m_ObjectHideFlags: 0
@@ -19815,7 +19819,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a0ada2e3cb36814783c455361c3a920, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  secondsToFade: 10
+  secondsToFade: 15
 --- !u!1 &7794414557122377174
 GameObject:
   m_ObjectHideFlags: 0

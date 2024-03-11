@@ -26,6 +26,8 @@ public class BaseEnemyLightController : MonoBehaviour
 
     void HandleDistanceToPlayer()
     {
+        if (player == null)
+            return;
         float distanceToPlayer = Vector2.Distance(transform.position, player.position);
         if (distanceToPlayer <= distanceToActivate)
             EnableLight();

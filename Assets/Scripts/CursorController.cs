@@ -43,15 +43,16 @@ public class CursorController : MonoBehaviour
 
     public void EnableFancyMouse()
     {
-        cursorMaterial.DOFloat(0f, "_FadeAmount", cursorFadeDuration).SetUpdate(true);
+        cursorMaterial.DOFloat(0f, "_FadeAmount", cursorFadeDuration).SetUpdate(true);        
         var emission = followParticles.emission;
         emission.enabled = true;
+        followParticles.Play();
     }
     public void DisableFancyMouse()
     {
         var emission = followParticles.emission;
         emission.enabled = false;
-        burstParticles.Play();
+        // burstParticles.Play();
         cursorMaterial.DOFloat(1f, "_FadeAmount", cursorFadeDuration).SetUpdate(true);
     }
 

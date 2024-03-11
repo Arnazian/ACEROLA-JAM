@@ -9,6 +9,7 @@ public class TutorialPrompts : MonoBehaviour
     [SerializeField] private GameObject movePrompt;
     [SerializeField] private GameObject dashPrompt;
     [SerializeField] private GameObject shootPrompt;
+    [SerializeField] private GameObject compassPrompt;
 
     public void OpenMovePormpt()
     {
@@ -28,4 +29,10 @@ public class TutorialPrompts : MonoBehaviour
         PauseGame.instance.DoPauseGame();
         PlayerStateController.instance.StunPlayer();
     }
- }
+    public void OpenCompassPrompt()
+    {
+        compassPrompt.SetActive(true);
+        PauseGame.instance.DoPauseGame();
+        PlayerStateController.instance.StunPlayer();
+    }
+}
